@@ -1,159 +1,102 @@
-/* Chanel Inspired Aesthetics */
-:root {
-    --primary-gold: #C5B358;
-    --pure-black: #000000;
-    --pearl-white: #FFFFFF;
-    --soft-gray: #F5F5F5;
-}
-
-body {
-    background-color: var(--pearl-white);
-    color: var(--pure-black);
-    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
-    margin: 0;
-    line-height: 1.8;
-}
-
-h1, h2, h3, .serif-font {
-    font-family: 'Playfair Display', serif;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 40px;
-}
-
-/* Header & Hero */
-.hero {
-    padding: 120px 0 60px;
-    text-align: center;
-    border-bottom: 1px solid var(--pure-black);
-}
-
-.hero h1 { font-size: 3.5rem; margin-bottom: 20px; }
-
-/* Search Component */
-.search-container {
-    margin: 50px auto;
-    max-width: 650px;
-}
-
-.search-group {
+/* Layout Structure */
+.layout-wrapper {
     display: flex;
-    border-bottom: 1px solid var(--pure-black);
-    align-items: center;
+    min-height: 100vh;
 }
 
-.search-select {
-    border: none;
-    background: transparent;
-    font-family: 'Playfair Display', serif;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    padding: 15px;
-    cursor: pointer;
-    outline: none;
-}
-
-.search-input {
-    flex-grow: 1;
-    border: none;
-    padding: 15px 20px;
-    font-size: 1.1rem;
-    outline: none;
-}
-
-.cta-button {
-    background: var(--pure-black);
-    color: var(--pearl-white);
-    padding: 12px 45px;
-    border: none;
-    margin-top: 30px;
-    cursor: pointer;
-    letter-spacing: 0.2em;
-    transition: 0.3s;
-}
-
-.cta-button:hover { background: var(--primary-gold); }
-
-/* Grid & Cards */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
-    margin: 60px 0;
-}
-
-.card {
-    border: 1px solid #E5E5E5;
-    padding: 40px 20px;
-    text-align: center;
-    transition: 0.3s;
-}
-
-.card:hover { border-color: var(--pure-black); }
-
-/* Results Page Elements */
-.sort-tags {
-    display: flex;
-    gap: 30px;
-    margin: 40px 0 20px;
-    border-bottom: 1px solid #EEE;
-    padding-bottom: 10px;
-}
-
-.sort-tag {
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    color: #999;
-    cursor: pointer;
-    text-transform: uppercase;
-    position: relative;
-}
-
-.sort-tag.active { color: #000; font-weight: bold; }
-.sort-tag.active::after {
-    content: '';
-    position: absolute;
-    bottom: -11px;
-    left: 0;
-    width: 100%;
-    height: 2px;
+.filter-sidebar {
+    width: 280px;
     background: #000;
+    color: #fff;
+    padding: 40px 25px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
 }
 
-.summary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background-color: #000;
-    border: 1px solid #000;
-    margin: 40px 0;
+.main-content {
+    flex-grow: 1;
+    padding: 60px;
+    background: #fff;
 }
 
-.summary-item { background: #fff; padding: 30px; text-align: center; }
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 40px 0;
+/* Sidebar Elements */
+.brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
 }
 
-.data-table th {
-    text-align: left;
-    border-bottom: 2px solid var(--pure-black);
-    padding: 20px 10px;
-    font-size: 0.75rem;
+.filter-group {
+    margin-bottom: 30px;
 }
 
-.data-table td { padding: 20px 10px; border-bottom: 1px solid #EEE; }
-
-.tag {
-    font-size: 0.65rem;
-    border: 1px solid #000;
-    padding: 2px 6px;
+.filter-group label {
+    display: block;
+    font-size: 0.7rem;
+    color: #888;
     text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.filter-group input, .filter-group select {
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 10px;
+    font-size: 0.85rem;
+}
+
+/* Viz Row */
+.viz-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.chart-container {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #eee;
+    text-align: center;
+}
+
+.chart-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+/* Table Animation */
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-sm {
+    background: none;
+    border: 1px solid #000;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-sm:hover {
+    background: #000;
+    color: #fff;
 }
