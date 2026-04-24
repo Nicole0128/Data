@@ -2,20 +2,25 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RESULTS | THE 2016 COLLECTION</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
     <div class="container" style="padding-top: 60px;">
-        <nav><a href="index.html" class="back-link">← RETURN TO ARCHIVE</a></nav>
+        <nav><a href="index.html" style="text-decoration:none; color:#000; font-size:0.8rem; letter-spacing:2px;">← BACK TO ARCHIVE</a></nav>
+        
+        <h1 class="serif-font" style="margin: 40px 0 20px;">The Results</h1>
 
-        <div class="result-header">
-            <h1 class="serif-font">The Data Archive</h1>
+        <div id="quick-summary" class="summary-grid"></div>
+
+        <div class="sort-tags">
+            <span class="sort-tag active" onclick="sortData('總收入', this)">按總收入</span>
+            <span class="sort-tag" onclick="sortData('得票數', this)">按得票數</span>
+            <span class="sort-tag" onclick="sortData('營利事業捐贈比例', this)">按企業比例</span>
         </div>
-
-        <div id="quick-summary" class="summary-grid">
-            </div>
 
         <table class="data-table">
             <thead>
@@ -23,15 +28,14 @@
                     <th class="serif-font">姓名</th>
                     <th class="serif-font">政黨</th>
                     <th class="serif-font">地區</th>
-                    <th class="serif-font" style="text-align: right;">總收入</th>
-                    <th class="serif-font" style="text-align: right;">企業比例</th>
+                    <th class="serif-font" style="text-align:right;">總收入</th>
+                    <th class="serif-font" style="text-align:right;">得票數</th>
+                    <th class="serif-font" style="text-align:right;">企業比</th>
                 </tr>
             </thead>
-            <tbody id="data-table-body">
-                </tbody>
+            <tbody id="data-table-body"></tbody>
         </table>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
