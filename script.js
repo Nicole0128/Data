@@ -1,32 +1,70 @@
 let rawData = [];
+let myChart = null; // 用於儲存圖表實例
 
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q') || "";
-    const category = urlParams.get('cat') || "姓名";
-
+    
     Papa.parse("A05_basic_all.csv", {
         download: true,
         header: true,
         complete: function(results) {
-            rawData = results.data.filter(row => {
-                if (!row[category]) return false;
-                return row[category].includes(query);
-            });
-            sortData('總收入');
+            rawData = results.data;
+            applyFilters(); // 初始化顯示
         }
     });
 });
 
-function sortData(field, element) {
-    if (element) {
-        document.querySelectorAll('.sort-tag').forEach(el => el.classList.remove('active'));
-        element.classList.add('active');
-    }
+function applyFilters() {
+    const q = document.getElementById('search-q').value.toLowerCase();
+    const party = document.getElementById('filter-party').value;
+    const gender = document.getElementById('filter-gender').value;
+    const elected = document.getElementById('filter-elected').value;
 
-    let sortedData = [...rawData].sort((a, b) => parseNumber(b[field]) - parseNumber(a[field]));
-    renderTable(sortedData);
-    renderSummary(sortedData);
+    let filtered = rawData.filter(row => {
+        const matchName = row.姓名 ? row.姓名.includes(q) : true;
+        const matchParty = party ? row.推薦政黨 === party : true;
+        const matchGender = gender ? row.性別 === gender : true;
+        const matchElected = elected ? row.當選註記 === (elected === "是" ? "*" : "") : true;
+        return matchName && matchParty && matchGender && matchElected;
+    });
+
+    renderTable(filtered);
+    updateChart(filtered);
+    renderSummary(filtered);
+}
+
+// 渲染圖表：顯示該群組的平均收入來源佔比
+function updateChart(data) {
+    const ctx = document.getElementById('incomeChart').getContext('2d');
+    if (myChart) myChart.destroy();
+
+    const avg = {
+        personal: 0, corporate: 0, party: 0, group: 0, anonymous: 0
+    };
+
+    data.forEach(d => {
+        avg.personal += parseNumber(d.個人捐贈收入);
+        avg.corporate += parseNumber(d.營利事業捐贈收入);
+        avg.party += parseNumber(d.政黨捐贈收入);
+        avg.group += parseNumber(d.人民團體捐贈收入);
+        avg.anonymous += parseNumber(d.匿名捐贈收入);
+    });
+
+    myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['個人', '企業', '政黨', '人民團體', '匿名'],
+            datasets: [{
+                data: [avg.personal, avg.corporate, avg.party, avg.group, avg.anonymous],
+                backgroundColor: ['#000', '#C5B358', '#E5E5E5', '#888', '#D4AF37'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            cutout: '80%',
+            plugins: { legend: { position: 'bottom', labels: { font: { family: 'Montserrat' } } } }
+        }
+    });
 }
 
 function parseNumber(val) {
@@ -35,27 +73,15 @@ function parseNumber(val) {
 }
 
 function renderTable(items) {
-    const tableBody = document.querySelector('#data-table-body');
-    if (!tableBody) return;
-    tableBody.innerHTML = items.map(item => `
-        <tr>
-            <td class="serif-font" style="font-weight:bold;">${item.姓名}</td>
+    const tbody = document.getElementById('data-table-body');
+    tbody.innerHTML = items.slice(0, 50).map(item => `
+        <tr class="fade-in">
+            <td class="serif-font"><strong>${item.姓名}</strong></td>
             <td><span class="tag">${item.推薦政黨}</span></td>
-            <td>${item.地區}</td>
-            <td style="text-align:right;">${parseInt(item.總收入 || 0).toLocaleString()}</td>
-            <td style="text-align:right;">${parseInt(item.得票數 || 0).toLocaleString()}</td>
-            <td style="text-align:right;">${item.營利事業捐贈比例 || '0%'}</td>
+            <td>${item.性別} | ${item.出生年次}</td>
+            <td style="text-align:right;">NT$ ${parseInt(item.總收入).toLocaleString()}</td>
+            <td style="text-align:right;">${item.當選註記 === '*' ? '✓ 當選' : '-'}</td>
+            <td><button class="btn-sm" onclick="addToCompare('${item.姓名}')">對比</button></td>
         </tr>
     `).join('');
-}
-
-function renderSummary(items) {
-    const container = document.querySelector('#quick-summary');
-    if (!container || items.length === 0) return;
-    const total = items.reduce((acc, cur) => acc + parseNumber(cur.總收入), 0);
-    container.innerHTML = `
-        <div class="summary-item"><small>結果筆數</small><br><strong class="serif-font">${items.length}</strong></div>
-        <div class="summary-item"><small>總募款額</small><br><strong class="serif-font">NT$ ${(total/100000000).toFixed(2)}億</strong></div>
-        <div class="summary-item"><small>榜首</small><br><strong class="serif-font">${items[0].姓名}</strong></div>
-    `;
 }
