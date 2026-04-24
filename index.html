@@ -2,6 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE 2016 COLLECTION | 政治獻金查詢</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
@@ -9,25 +10,46 @@
 <body>
     <div class="container">
         <header class="hero">
-            <div class="hero-subtitle">LEGISLATIVE ELECTION 2016</div>
-            <h1>錢權的廓形</h1>
+            <div style="letter-spacing: 0.4em; font-size: 0.8rem; color: #888; margin-bottom: 10px;">DATA ARCHIVE</div>
+            <h1 class="serif-font">錢權的廓形</h1>
+            <p>2016 立委選舉政治獻金深度檢索</p>
+            
             <div class="search-container">
-                <input type="text" id="main-search" class="search-input" placeholder="搜尋候選人名稱...">
-                <button class="cta-button" onclick="handleSearch()">探索數據檔案</button>
+                <div class="search-group">
+                    <select id="search-category" class="search-select">
+                        <option value="姓名">候選人</option>
+                        <option value="推薦政黨">政黨</option>
+                        <option value="地區">地區</option>
+                    </select>
+                    <input type="text" id="main-search" class="search-input" placeholder="輸入關鍵字...">
+                </div>
+                <button class="cta-button" onclick="handleSearch()">EXPLORE</button>
             </div>
         </header>
 
-        <section class="picks-section">
-            <h2 style="text-align: center; margin-bottom: 60px;">Editor’s Picks</h2>
+        <section style="padding: 80px 0;">
+            <h2 style="text-align: center;">Editor's Picks</h2>
             <div class="grid">
+                <div class="card">
+                    <span class="tag">TOP INCOME</span>
+                    <h3 class="serif-font">柯建銘</h3>
+                    <div style="color: var(--primary-gold); font-size: 1.5rem; margin: 15px 0;">NT$ 51,641,147</div>
+                    <p style="font-size: 0.8rem;">該屆募款總額之冠，展現極強的資源動員力。</p>
                 </div>
+                <div class="card">
+                    <span class="tag">CORPORATE</span>
+                    <h3 class="serif-font">邱志偉</h3>
+                    <div style="color: var(--primary-gold); font-size: 1.5rem; margin: 15px 0;">NT$ 38,603,507</div>
+                    <p style="font-size: 0.8rem;">獲得 133 家企業捐贈，是企業支持度極高的指標。</p>
+                </div>
+            </div>
         </section>
     </div>
-
     <script>
         function handleSearch() {
+            const cat = document.getElementById('search-category').value;
             const val = document.getElementById('main-search').value;
-            window.location.href = `result.html?q=${encodeURIComponent(val)}`;
+            window.location.href = `result.html?cat=${encodeURIComponent(cat)}&q=${encodeURIComponent(val)}`;
         }
     </script>
 </body>
