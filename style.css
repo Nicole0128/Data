@@ -136,3 +136,31 @@ h1, h2, h3, .serif-font {
     padding: 20px 10px;
     border-bottom: 1px solid #EEE;
 }
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background-color: #000; /* 製作細線邊框感 */
+    border: 1px solid #000;
+    margin: 40px 0;
+}
+
+.summary-item {
+    background-color: #fff;
+    padding: 30px;
+    text-align: center;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #000;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    border-bottom: 1px solid transparent;
+}
+
+.back-link:hover {
+    border-bottom: 1px solid #000;
+}
+
