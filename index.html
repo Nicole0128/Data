@@ -2,53 +2,33 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE 2016 COLLECTION | 政治獻金查詢</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Montserrat:wght@300;400&family=Noto+Sans+TC:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header class="hero">
             <div class="hero-subtitle">LEGISLATIVE ELECTION 2016</div>
             <h1>錢權的廓形</h1>
-            <p>政治獻金不只是數字，它是權力流動的剪裁與設計。</p>
-            
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="輸入候選人名稱...">
-                <button class="cta-button" onclick="location.href='result.html'">探索數據檔案</button>
-                <div style="margin-top: 20px; font-size: 0.8rem; color: #888;">
-                    推薦查詢：柯建銘、丁守中、營利事業捐贈
-                </div>
+                <input type="text" id="main-search" class="search-input" placeholder="搜尋候選人名稱...">
+                <button class="cta-button" onclick="handleSearch()">探索數據檔案</button>
             </div>
         </header>
 
         <section class="picks-section">
-            <h2 style="text-align: center; margin-bottom: 60px;">Editor’s Picks / 編輯精選案例</h2>
+            <h2 style="text-align: center; margin-bottom: 60px;">Editor’s Picks</h2>
             <div class="grid">
-                <div class="card">
-                    <span class="label">TOP INCOME</span>
-                    <h3 class="serif-font">柯建銘</h3>
-                    <p>民主進步黨 | 新竹市</p>
-                    <div style="color: var(--primary-gold); font-size: 1.5rem;" class="serif-font">NT$ 51,641,147</div>
-                    <p style="font-size: 0.8rem; margin-top: 15px;">2016年募款總額之冠，企業捐贈佔比過半，展現強大的產業界聯繫。</p>
                 </div>
-                <div class="card">
-                    <span class="label">CORPORATE FOCUS</span>
-                    <h3 class="serif-font">邱志偉</h3>
-                    <p>民主進步黨 | 高雄市</p>
-                    <div style="color: var(--primary-gold); font-size: 1.5rem;" class="serif-font">NT$ 38,603,507</div>
-                    <p style="font-size: 0.8rem; margin-top: 15px;">獲 133 家企業捐贈，是該屆獲企業支持家數極高的候選人。</p>
-                </div>
-                <div class="card">
-                    <span class="label">CLASSIC RIVAL</span>
-                    <h3 class="serif-font">丁守中</h3>
-                    <p>中國國民黨 | 臺北市</p>
-                    <div style="color: var(--primary-gold); font-size: 1.5rem;" class="serif-font">NT$ 49,603,735</div>
-                    <p style="font-size: 0.8rem; margin-top: 15px;">資深立委的政治獻金結構，反映了傳統大黨在首都的資源挹注。</p>
-                </div>
-            </div>
         </section>
     </div>
+
+    <script>
+        function handleSearch() {
+            const val = document.getElementById('main-search').value;
+            window.location.href = `result.html?q=${encodeURIComponent(val)}`;
+        }
+    </script>
 </body>
 </html>
