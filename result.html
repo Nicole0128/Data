@@ -2,39 +2,79 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RESULTS | THE 2016 COLLECTION</title>
+    <title>THE ARCHIVE | 2016 COLLECTION</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
-<body>
-    <div class="container" style="padding-top: 60px;">
-        <nav><a href="index.html" style="text-decoration:none; color:#000; font-size:0.8rem; letter-spacing:2px;">← BACK TO ARCHIVE</a></nav>
-        
-        <h1 class="serif-font" style="margin: 40px 0 20px;">The Results</h1>
+<body class="result-page">
+    <div class="layout-wrapper">
+        <aside class="filter-sidebar">
+            <div class="brand">CHANEL <span style="font-size: 0.6rem;">POLITICS</span></div>
+            <nav>
+                <div class="filter-group">
+                    <label>搜尋名稱</label>
+                    <input type="text" id="search-q" oninput="applyFilters()" placeholder="Search...">
+                </div>
+                <div class="filter-group">
+                    <label>推薦政黨</label>
+                    <select id="filter-party" onchange="applyFilters()">
+                        <option value="">全部政黨</option>
+                        <option value="民主進步黨">民主進步黨</option>
+                        <option value="中國國民黨">中國國民黨</option>
+                        <option value="時代力量">時代力量</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>性別</label>
+                    <select id="filter-gender" onchange="applyFilters()">
+                        <option value="">全部</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>當選結果</label>
+                    <select id="filter-elected" onchange="applyFilters()">
+                        <option value="">全部</option>
+                        <option value="是">當選者</option>
+                        <option value="否">落選者</option>
+                    </select>
+                </div>
+            </nav>
+        </aside>
 
-        <div id="quick-summary" class="summary-grid"></div>
+        <main class="main-content">
+            <header class="content-header">
+                <h1 class="serif-font">Collection Overview</h1>
+                <div id="quick-summary" class="summary-line"></div>
+            </header>
 
-        <div class="sort-tags">
-            <span class="sort-tag active" onclick="sortData('總收入', this)">按總收入</span>
-            <span class="sort-tag" onclick="sortData('得票數', this)">按得票數</span>
-            <span class="sort-tag" onclick="sortData('營利事業捐贈比例', this)">按企業比例</span>
-        </div>
+            <div class="viz-row">
+                <div class="chart-container">
+                    <canvas id="incomeChart"></canvas>
+                    <div class="chart-label">收入結構分析</div>
+                </div>
+                <div class="info-card">
+                    <h3 class="serif-font">趨勢洞察</h3>
+                    <p>根據當前篩選條件，企業捐贈佔比呈現出顯著的城鄉差異...</p>
+                </div>
+            </div>
 
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th class="serif-font">姓名</th>
-                    <th class="serif-font">政黨</th>
-                    <th class="serif-font">地區</th>
-                    <th class="serif-font" style="text-align:right;">總收入</th>
-                    <th class="serif-font" style="text-align:right;">得票數</th>
-                    <th class="serif-font" style="text-align:right;">企業比</th>
-                </tr>
-            </thead>
-            <tbody id="data-table-body"></tbody>
-        </table>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>政黨</th>
+                        <th>背景</th>
+                        <th style="text-align:right;">總收入</th>
+                        <th style="text-align:right;">狀態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body"></tbody>
+            </table>
+        </main>
     </div>
     <script src="script.js"></script>
 </body>
