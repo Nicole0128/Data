@@ -1,81 +1,568 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>THE ARCHIVE | 2016 COLLECTION</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2016 政治獻金結果列表｜金流大富翁 2016</title>
+  <link rel="stylesheet" href="style2016.css" />
 </head>
 <body class="result-page">
-    <div class="layout-wrapper">
-        <aside class="filter-sidebar">
-            <div class="brand">CHANEL <span style="font-size: 0.6rem;">POLITICS</span></div>
-            <nav>
-                <div class="filter-group">
-                    <label>搜尋名稱</label>
-                    <input type="text" id="search-q" oninput="applyFilters()" placeholder="Search...">
-                </div>
-                <div class="filter-group">
-                    <label>推薦政黨</label>
-                    <select id="filter-party" onchange="applyFilters()">
-                        <option value="">全部政黨</option>
-                        <option value="民主進步黨">民主進步黨</option>
-                        <option value="中國國民黨">中國國民黨</option>
-                        <option value="時代力量">時代力量</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>性別</label>
-                    <select id="filter-gender" onchange="applyFilters()">
-                        <option value="">全部</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>當選結果</label>
-                    <select id="filter-elected" onchange="applyFilters()">
-                        <option value="">全部</option>
-                        <option value="是">當選者</option>
-                        <option value="否">落選者</option>
-                    </select>
-                </div>
-            </nav>
-        </aside>
+  <div class="noise"></div>
+  <header class="site-header result-header">
+    <a class="brand" href="專題首頁2016.html" aria-label="回首頁">
+      <span class="brand-mark">$</span>
+      <span>金流大富翁 2016</span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a href="專題首頁2016.html">專題首頁</a>
+      <a href="#controls">搜尋篩選</a>
+      <a href="#results">結果卡</a>
+    </nav>
+  </header>
 
-        <main class="main-content">
-            <header class="content-header">
-                <h1 class="serif-font">Collection Overview</h1>
-                <div id="quick-summary" class="summary-line"></div>
-            </header>
+  <main class="result-shell">
+    <section class="result-hero reveal-up">
+      <div>
+        <p class="eyebrow">RESULTS LIST / RANKING MODE</p>
+        <h1 class="neon-title compact-title">2016 候選人金流卡</h1>
+        <p>誰的金流最厚？誰的企業應援最多？排行榜直接開出來。所有解讀都以原始欄位為基礎，呈現金流來源、捐贈結構與選戰支出。</p>
+      </div>
+      <div class="csv-backup result-backup" id="resultBackup">
+        <strong>資料載入器</strong>
+        <span id="resultLoadStatus">正在讀取 A05_basic_all.csv……</span>
+        <label class="file-btn small">
+          手動上傳 CSV
+          <input type="file" id="resultCsvInput" accept=".csv,text/csv" />
+        </label>
+      </div>
+    </section>
 
-            <div class="viz-row">
-                <div class="chart-container">
-                    <canvas id="incomeChart"></canvas>
-                    <div class="chart-label">收入結構分析</div>
-                </div>
-                <div class="info-card">
-                    <h3 class="serif-font">趨勢洞察</h3>
-                    <p>根據當前篩選條件，企業捐贈佔比呈現出顯著的城鄉差異...</p>
-                </div>
+    <section class="summary-board reveal-up delay-1" aria-label="搜尋結果摘要">
+      <article class="summary-tile pulse-border">
+        <span>目前顯示</span>
+        <strong id="sumCount">—</strong>
+        <small>筆資料進場</small>
+      </article>
+      <article class="summary-tile">
+        <span>總收入合計</span>
+        <strong id="sumIncome">—</strong>
+        <small>金流補給總量</small>
+      </article>
+      <article class="summary-tile">
+        <span>總支出合計</span>
+        <strong id="sumExpense">—</strong>
+        <small>選戰消耗總量</small>
+      </article>
+      <article class="summary-tile">
+        <span>平均總收入</span>
+        <strong id="sumAvgIncome">—</strong>
+        <small>每張卡平均補給</small>
+      </article>
+      <article class="summary-tile">
+        <span>企業捐贈合計</span>
+        <strong id="sumBusiness">—</strong>
+        <small>營利事業來源</small>
+      </article>
+      <article class="summary-tile">
+        <span>個人捐贈合計</span>
+        <strong id="sumPersonal">—</strong>
+        <small>個人支持能量</small>
+      </article>
+      <article class="summary-tile wide">
+        <span>最高總收入候選人</span>
+        <strong id="sumTopIncome">—</strong>
+        <small id="sumTopIncomeMeta">等待資料</small>
+      </article>
+      <article class="summary-tile wide">
+        <span>最高總支出候選人</span>
+        <strong id="sumTopExpense">—</strong>
+        <small id="sumTopExpenseMeta">等待資料</small>
+      </article>
+    </section>
+
+    <section id="controls" class="control-panel reveal-up delay-2" aria-label="搜尋與篩選控制列">
+      <div class="control-title">
+        <p class="eyebrow">CONTROL ROOM</p>
+        <h2>查詢控制台</h2>
+      </div>
+      <div class="controls-grid">
+        <label>
+          搜尋姓名／地區／政黨／委員會
+          <input type="search" id="searchInput" placeholder="輸入關鍵字" />
+        </label>
+        <label>
+          政黨篩選
+          <select id="partyFilter"><option value="">全部政黨</option></select>
+        </label>
+        <label>
+          是否現任
+          <select id="incumbentFilter">
+            <option value="">全部</option>
+            <option value="是">現任</option>
+            <option value="否">非現任</option>
+          </select>
+        </label>
+        <label>
+          委員會篩選
+          <select id="committeeFilter"><option value="">全部委員會</option></select>
+        </label>
+        <label>
+          總收入大於
+          <input type="number" id="minIncomeFilter" min="0" step="100000" placeholder="例如 1000000" />
+        </label>
+        <label>
+          排行榜排序
+          <select id="sortSelect">
+            <option value="totalIncome">總收入高到低</option>
+            <option value="totalExpense">總支出高到低</option>
+            <option value="votes">得票數高到低</option>
+            <option value="voteRate">得票率高到低</option>
+            <option value="enterpriseCount">捐贈企業數高到低</option>
+            <option value="personalPct">個人捐贈比例高到低</option>
+            <option value="businessPct">營利事業捐贈比例高到低</option>
+            <option value="businessIncome">營利事業捐贈收入高到低</option>
+            <option value="anonymousIncome">匿名捐贈收入高到低</option>
+            <option value="largeIncome">超過三萬元之收入高到低</option>
+          </select>
+        </label>
+      </div>
+      <div class="control-actions">
+        <button class="btn btn-primary" id="applyBtn" type="button">套用查詢</button>
+        <button class="btn btn-ghost" id="resetBtn" type="button">清除篩選</button>
+      </div>
+    </section>
+
+    <section class="ranking-strip reveal-up" aria-label="快速排行榜按鈕">
+      <button data-sort="totalIncome">總收入榜</button>
+      <button data-sort="totalExpense">支出爆表榜</button>
+      <button data-sort="businessPct">企業比例榜</button>
+      <button data-sort="personalPct">個人支持榜</button>
+      <button data-sort="anonymousIncome">匿名金流榜</button>
+      <button data-sort="largeIncome">三萬以上收入榜</button>
+    </section>
+
+    <section id="results" class="results-section">
+      <div class="result-meta">
+        <h2>Results List</h2>
+        <p id="resultDescription">資料卡準備發牌中……</p>
+      </div>
+      <div id="cardsGrid" class="cards-grid" aria-live="polite"></div>
+      <div id="emptyState" class="empty-state" hidden>
+        <h3>這一局沒有找到符合條件的資料</h3>
+        <p>換個候選人、政黨、地區或降低金額門檻再試一次。</p>
+      </div>
+      <nav class="pagination" aria-label="結果分頁">
+        <button id="prevPage" class="btn btn-ghost" type="button">上一頁</button>
+        <span id="pageInfo">第 1 頁 / 共 1 頁</span>
+        <button id="nextPage" class="btn btn-ghost" type="button">下一頁</button>
+      </nav>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>卡片標籤由資料欄位與排序衍生：用來提示金流結構，不代表價值判斷或違法暗示。</p>
+  </footer>
+
+  <script>
+    const CSV_CANDIDATES = ['A05_basic_all.csv', 'A05_basic_all(1).csv'];
+    const PAGE_SIZE = 12;
+    const SORT_CONFIG = {
+      totalIncome: { label: '總收入高到低', field: '總收入', type: 'money' },
+      totalExpense: { label: '總支出高到低', field: '總支出', type: 'money' },
+      votes: { label: '得票數高到低', field: '得票數', type: 'number' },
+      voteRate: { label: '得票率高到低', field: '得票率', type: 'percent' },
+      enterpriseCount: { label: '捐贈企業數高到低', field: '捐贈企業數', type: 'number' },
+      personalPct: { label: '個人捐贈比例高到低', field: '個人捐贈比例', type: 'percent' },
+      businessPct: { label: '營利事業捐贈比例高到低', field: '營利事業捐贈比例', type: 'percent' },
+      businessIncome: { label: '營利事業捐贈收入高到低', field: '營利事業捐贈收入', type: 'money' },
+      anonymousIncome: { label: '匿名捐贈收入高到低', field: '匿名捐贈收入', type: 'money' },
+      largeIncome: { label: '超過三萬元之收入高到低', field: '超過三萬元之收入', type: 'money' }
+    };
+
+    let allRows = [];
+    let filteredRows = [];
+    let currentPage = 1;
+
+    const dom = {
+      searchInput: document.getElementById('searchInput'),
+      partyFilter: document.getElementById('partyFilter'),
+      incumbentFilter: document.getElementById('incumbentFilter'),
+      committeeFilter: document.getElementById('committeeFilter'),
+      minIncomeFilter: document.getElementById('minIncomeFilter'),
+      sortSelect: document.getElementById('sortSelect'),
+      cardsGrid: document.getElementById('cardsGrid'),
+      emptyState: document.getElementById('emptyState'),
+      resultDescription: document.getElementById('resultDescription'),
+      pageInfo: document.getElementById('pageInfo'),
+      prevPage: document.getElementById('prevPage'),
+      nextPage: document.getElementById('nextPage'),
+      resultLoadStatus: document.getElementById('resultLoadStatus')
+    };
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let insideQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (char === '"') {
+          if (insideQuotes && next === '"') {
+            cell += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          row.push(cell);
+          cell = '';
+        } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(cell);
+          if (row.some(value => value.trim() !== '')) rows.push(row);
+          row = [];
+          cell = '';
+        } else {
+          cell += char;
+        }
+      }
+      if (cell || row.length) {
+        row.push(cell);
+        if (row.some(value => value.trim() !== '')) rows.push(row);
+      }
+      const headers = rows.shift().map(header => header.replace(/^\uFEFF/, '').trim());
+      return rows.map((values, index) => {
+        const item = { _id: index + 1 };
+        headers.forEach((header, valueIndex) => item[header] = (values[valueIndex] || '').trim());
+        return item;
+      });
+    }
+
+    function numberValue(value) {
+      if (value === undefined || value === null || value === '') return 0;
+      const cleaned = String(value).replace(/[,$％%\s]/g, '').replace(/—/g, '');
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function isEmpty(value) {
+      return value === undefined || value === null || String(value).trim() === '';
+    }
+
+    function display(value) {
+      return isEmpty(value) ? '—' : value;
+    }
+
+    function formatMoney(value) {
+      if (isEmpty(value)) return '—';
+      return '$' + Math.round(numberValue(value)).toLocaleString('en-US');
+    }
+
+    function formatCount(value) {
+      if (isEmpty(value)) return '—';
+      return Math.round(numberValue(value)).toLocaleString('en-US');
+    }
+
+    function formatPercent(value) {
+      if (isEmpty(value)) return '—';
+      const num = numberValue(value);
+      return `${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+    }
+
+    function valueForSort(row, sortKey) {
+      const config = SORT_CONFIG[sortKey] || SORT_CONFIG.totalIncome;
+      return numberValue(row[config.field]);
+    }
+
+    function enrichRows(rows) {
+      const rankFields = [
+        ['_rankTotalIncome', '總收入'],
+        ['_rankTotalExpense', '總支出'],
+        ['_rankAnonymousIncome', '匿名捐贈收入'],
+        ['_rankBusinessPct', '營利事業捐贈比例'],
+        ['_rankPersonalPct', '個人捐贈比例']
+      ];
+      rankFields.forEach(([rankName, field]) => {
+        [...rows]
+          .sort((a, b) => numberValue(b[field]) - numberValue(a[field]))
+          .forEach((row, index) => row[rankName] = index + 1);
+      });
+      return rows;
+    }
+
+    function createOptions(select, values, placeholder) {
+      select.innerHTML = `<option value="">${placeholder}</option>`;
+      values
+        .filter(value => value && value.trim())
+        .sort((a, b) => a.localeCompare(b, 'zh-Hant'))
+        .forEach(value => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+    }
+
+    function setupFilters() {
+      createOptions(dom.partyFilter, [...new Set(allRows.map(row => row['推薦政黨']))], '全部政黨');
+      createOptions(dom.committeeFilter, [...new Set(allRows.map(row => row['委員會']))], '全部委員會');
+    }
+
+    function applyUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      dom.searchInput.value = params.get('search') || '';
+      dom.partyFilter.value = params.get('party') || '';
+      dom.incumbentFilter.value = params.get('incumbent') || '';
+      dom.committeeFilter.value = params.get('committee') || '';
+      dom.minIncomeFilter.value = params.get('minIncome') || '';
+      const sort = params.get('sort') || 'totalIncome';
+      dom.sortSelect.value = SORT_CONFIG[sort] ? sort : 'totalIncome';
+    }
+
+    function updateUrl() {
+      const params = new URLSearchParams();
+      if (dom.searchInput.value.trim()) params.set('search', dom.searchInput.value.trim());
+      if (dom.partyFilter.value) params.set('party', dom.partyFilter.value);
+      if (dom.incumbentFilter.value) params.set('incumbent', dom.incumbentFilter.value);
+      if (dom.committeeFilter.value) params.set('committee', dom.committeeFilter.value);
+      if (dom.minIncomeFilter.value) params.set('minIncome', dom.minIncomeFilter.value);
+      if (dom.sortSelect.value !== 'totalIncome') params.set('sort', dom.sortSelect.value);
+      const query = params.toString();
+      history.replaceState(null, '', `${window.location.pathname}${query ? '?' + query : ''}`);
+    }
+
+    function getSearchText(row) {
+      return [row['姓名'], row['地區'], row['推薦政黨'], row['委員會']].join(' ').toLowerCase();
+    }
+
+    function applyFilters(resetPage = true) {
+      const keyword = dom.searchInput.value.trim().toLowerCase();
+      const party = dom.partyFilter.value;
+      const incumbent = dom.incumbentFilter.value;
+      const committee = dom.committeeFilter.value;
+      const minIncome = numberValue(dom.minIncomeFilter.value);
+      const sortKey = dom.sortSelect.value;
+
+      filteredRows = allRows.filter(row => {
+        const keywordMatch = !keyword || getSearchText(row).includes(keyword);
+        const partyMatch = !party || row['推薦政黨'] === party;
+        const incumbentMatch = !incumbent || row['是否現任'] === incumbent;
+        const committeeMatch = !committee || row['委員會'] === committee;
+        const incomeMatch = !minIncome || numberValue(row['總收入']) >= minIncome;
+        return keywordMatch && partyMatch && incumbentMatch && committeeMatch && incomeMatch;
+      }).sort((a, b) => valueForSort(b, sortKey) - valueForSort(a, sortKey));
+
+      if (resetPage) currentPage = 1;
+      updateUrl();
+      renderSummary();
+      renderResults();
+    }
+
+    function sum(rows, field) {
+      return rows.reduce((total, row) => total + numberValue(row[field]), 0);
+    }
+
+    function renderSummary() {
+      const count = filteredRows.length;
+      const totalIncome = sum(filteredRows, '總收入');
+      const totalExpense = sum(filteredRows, '總支出');
+      const businessIncome = sum(filteredRows, '營利事業捐贈收入');
+      const personalIncome = sum(filteredRows, '個人捐贈收入');
+      const topIncome = [...filteredRows].sort((a, b) => numberValue(b['總收入']) - numberValue(a['總收入']))[0];
+      const topExpense = [...filteredRows].sort((a, b) => numberValue(b['總支出']) - numberValue(a['總支出']))[0];
+
+      document.getElementById('sumCount').textContent = formatCount(count);
+      document.getElementById('sumIncome').textContent = formatMoney(totalIncome);
+      document.getElementById('sumExpense').textContent = formatMoney(totalExpense);
+      document.getElementById('sumAvgIncome').textContent = count ? formatMoney(totalIncome / count) : '—';
+      document.getElementById('sumBusiness').textContent = formatMoney(businessIncome);
+      document.getElementById('sumPersonal').textContent = formatMoney(personalIncome);
+      document.getElementById('sumTopIncome').textContent = topIncome ? topIncome['姓名'] : '—';
+      document.getElementById('sumTopIncomeMeta').textContent = topIncome ? `${formatMoney(topIncome['總收入'])}｜${display(topIncome['推薦政黨'])}｜${display(topIncome['地區'])}` : '等待資料';
+      document.getElementById('sumTopExpense').textContent = topExpense ? topExpense['姓名'] : '—';
+      document.getElementById('sumTopExpenseMeta').textContent = topExpense ? `${formatMoney(topExpense['總支出'])}｜${display(topExpense['推薦政黨'])}｜${display(topExpense['地區'])}` : '等待資料';
+
+      const sortLabel = SORT_CONFIG[dom.sortSelect.value]?.label || '總收入高到低';
+      const query = dom.searchInput.value.trim() ? `「${dom.searchInput.value.trim()}」` : '全部資料';
+      dom.resultDescription.textContent = `${query}｜${sortLabel}｜共 ${formatCount(count)} 筆，現在顯示第 ${currentPage} 頁。`;
+    }
+
+    function getBadges(row) {
+      const badges = [];
+      if (row._rankTotalIncome <= 10) badges.push(['金流大魔王', 'pink']);
+      if (numberValue(row['營利事業捐贈比例']) >= 50 || row._rankBusinessPct <= 10) badges.push(['企業應援型', 'green']);
+      if (numberValue(row['個人捐贈比例']) >= 60 || row._rankPersonalPct <= 10) badges.push(['群眾支持型', 'yellow']);
+      if (row._rankTotalExpense <= 10) badges.push(['燒錢戰士', 'orange']);
+      if (row._rankAnonymousIncome <= 10 && numberValue(row['匿名捐贈收入']) > 0) badges.push(['神秘金流', 'purple']);
+      if (row['是否現任'] === '是') badges.push(['現任優勢', 'blue']);
+      return badges.slice(0, 5);
+    }
+
+    function bar(label, value, className) {
+      const pct = Math.max(0, Math.min(100, numberValue(value)));
+      return `
+        <div class="flow-bar ${className}">
+          <div class="flow-bar-label"><span>${label}</span><strong>${formatPercent(value)}</strong></div>
+          <div class="bar-track"><span style="width:${pct}%"></span></div>
+        </div>
+      `;
+    }
+
+    function metric(label, value, type = 'text') {
+      let formatted = display(value);
+      if (type === 'money') formatted = formatMoney(value);
+      if (type === 'count') formatted = formatCount(value);
+      if (type === 'percent') formatted = formatPercent(value);
+      return `<div class="metric"><span>${label}</span><strong>${formatted}</strong></div>`;
+    }
+
+    function renderCard(row, rank) {
+      const badges = getBadges(row).map(([text, color]) => `<span class="sticker ${color}">${text}</span>`).join('');
+      return `
+        <article class="candidate-card reveal-card">
+          <div class="scanline"></div>
+          <div class="card-topline">
+            <span class="rank-badge">#${rank}</span>
+            <div class="badge-row">${badges || '<span class="sticker">資料卡</span>'}</div>
+          </div>
+          <div class="candidate-head">
+            <div>
+              <h3>${display(row['姓名'])}</h3>
+              <p>${display(row['地區'])}｜${display(row['委員會'])}</p>
             </div>
+            <span class="party-pill">${display(row['推薦政黨'])}</span>
+          </div>
+          <div class="mini-facts">
+            ${metric('是否現任', row['是否現任'])}
+            ${metric('得票數', row['得票數'], 'count')}
+            ${metric('得票率', row['得票率'], 'percent')}
+            ${metric('捐贈企業數', row['捐贈企業數'], 'count')}
+          </div>
+          <div class="money-duel">
+            <div>
+              <span>總收入</span>
+              <strong>${formatMoney(row['總收入'])}</strong>
+            </div>
+            <div>
+              <span>總支出</span>
+              <strong>${formatMoney(row['總支出'])}</strong>
+            </div>
+          </div>
+          <div class="flow-bars">
+            ${bar('個人捐贈', row['個人捐贈比例'], 'personal')}
+            ${bar('營利事業', row['營利事業捐贈比例'], 'business')}
+            ${bar('政黨捐贈', row['政黨捐贈收入比例'], 'party')}
+            ${bar('匿名捐贈', row['匿名捐贈比例'], 'anonymous')}
+          </div>
+          <div class="detail-grid">
+            ${metric('個人捐贈收入', row['個人捐贈收入'], 'money')}
+            ${metric('營利事業捐贈收入', row['營利事業捐贈收入'], 'money')}
+            ${metric('政黨捐贈收入', row['政黨捐贈收入'], 'money')}
+            ${metric('匿名捐贈收入', row['匿名捐贈收入'], 'money')}
+            ${metric('超過三萬元之收入', row['超過三萬元之收入'], 'money')}
+          </div>
+        </article>
+      `;
+    }
 
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>姓名</th>
-                        <th>政黨</th>
-                        <th>背景</th>
-                        <th style="text-align:right;">總收入</th>
-                        <th style="text-align:right;">狀態</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="data-table-body"></tbody>
-            </table>
-        </main>
-    </div>
-    <script src="script.js"></script>
+    function renderResults() {
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+      dom.cardsGrid.innerHTML = pageRows.map((row, index) => renderCard(row, start + index + 1)).join('');
+      dom.emptyState.hidden = filteredRows.length !== 0;
+      dom.pageInfo.textContent = `第 ${currentPage} 頁 / 共 ${totalPages} 頁`;
+      dom.prevPage.disabled = currentPage <= 1;
+      dom.nextPage.disabled = currentPage >= totalPages;
+      renderSummary();
+    }
+
+    async function loadCSV() {
+      const sessionText = sessionStorage.getItem('a05csv2016');
+      if (sessionText) return parseCSV(sessionText);
+      let lastError;
+      for (const fileName of CSV_CANDIDATES) {
+        try {
+          const response = await fetch(fileName, { cache: 'no-store' });
+          if (!response.ok) throw new Error(response.statusText);
+          const text = await response.text();
+          sessionStorage.setItem('a05csv2016', text);
+          return parseCSV(text);
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError || new Error('CSV load failed');
+    }
+
+    function initialize(rows) {
+      allRows = enrichRows(rows);
+      setupFilters();
+      applyUrlParams();
+      dom.resultLoadStatus.textContent = `已載入 ${formatCount(allRows.length)} 筆資料，排行榜上線。`;
+      document.getElementById('resultBackup').classList.add('loaded');
+      applyFilters(true);
+    }
+
+    ['input', 'change'].forEach(eventName => {
+      dom.searchInput.addEventListener(eventName, () => applyFilters(true));
+      dom.minIncomeFilter.addEventListener(eventName, () => applyFilters(true));
+    });
+    [dom.partyFilter, dom.incumbentFilter, dom.committeeFilter, dom.sortSelect].forEach(element => {
+      element.addEventListener('change', () => applyFilters(true));
+    });
+    document.getElementById('applyBtn').addEventListener('click', () => applyFilters(true));
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      dom.searchInput.value = '';
+      dom.partyFilter.value = '';
+      dom.incumbentFilter.value = '';
+      dom.committeeFilter.value = '';
+      dom.minIncomeFilter.value = '';
+      dom.sortSelect.value = 'totalIncome';
+      applyFilters(true);
+    });
+    document.querySelectorAll('.ranking-strip button').forEach(button => {
+      button.addEventListener('click', () => {
+        dom.sortSelect.value = button.dataset.sort;
+        applyFilters(true);
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    dom.prevPage.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderResults();
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    dom.nextPage.addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderResults();
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    document.getElementById('resultCsvInput').addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = String(reader.result || '');
+        sessionStorage.setItem('a05csv2016', text);
+        initialize(parseCSV(text));
+      };
+      reader.readAsText(file, 'utf-8');
+    });
+
+    loadCSV()
+      .then(initialize)
+      .catch(() => {
+        dom.resultLoadStatus.textContent = '自動讀取被瀏覽器擋下，請手動上傳 CSV 後啟動排行榜。';
+        dom.resultDescription.textContent = '尚未載入資料。請使用上方「手動上傳 CSV」。';
+      });
+  </script>
 </body>
 </html>
