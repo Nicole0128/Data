@@ -1,56 +1,252 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE 2016 COLLECTION | 政治獻金查詢</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>金流大富翁 2016｜政治獻金遊樂場</title>
+  <link rel="stylesheet" href="style2016.css" />
 </head>
-<body>
-    <div class="container">
-        <header class="hero">
-            <div style="letter-spacing: 0.4em; font-size: 0.8rem; color: #888; margin-bottom: 10px;">DATA ARCHIVE</div>
-            <h1 class="serif-font">錢權的廓形</h1>
-            <p>2016 立委選舉政治獻金深度檢索</p>
-            
-            <div class="search-container">
-                <div class="search-group">
-                    <select id="search-category" class="search-select">
-                        <option value="姓名">候選人</option>
-                        <option value="推薦政黨">政黨</option>
-                        <option value="地區">地區</option>
-                    </select>
-                    <input type="text" id="main-search" class="search-input" placeholder="輸入關鍵字...">
-                </div>
-                <button class="cta-button" onclick="handleSearch()">EXPLORE</button>
-            </div>
-        </header>
+<body class="home-page">
+  <div class="noise"></div>
+  <header class="site-header">
+    <a class="brand" href="專題首頁2016.html" aria-label="回首頁">
+      <span class="brand-mark">$</span>
+      <span>金流大富翁 2016</span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a href="#search-zone">查金流</a>
+      <a href="#examples">範例查詢</a>
+      <a href="#editors">精選案例</a>
+      <a class="nav-cta" href="2016_result.html">排行榜開局</a>
+    </nav>
+  </header>
 
-        <section style="padding: 80px 0;">
-            <h2 style="text-align: center;">Editor's Picks</h2>
-            <div class="grid">
-                <div class="card">
-                    <span class="tag">TOP INCOME</span>
-                    <h3 class="serif-font">柯建銘</h3>
-                    <div style="color: var(--primary-gold); font-size: 1.5rem; margin: 15px 0;">NT$ 51,641,147</div>
-                    <p style="font-size: 0.8rem;">該屆募款總額之冠，展現極強的資源動員力。</p>
-                </div>
-                <div class="card">
-                    <span class="tag">CORPORATE</span>
-                    <h3 class="serif-font">邱志偉</h3>
-                    <div style="color: var(--primary-gold); font-size: 1.5rem; margin: 15px 0;">NT$ 38,603,507</div>
-                    <p style="font-size: 0.8rem;">獲得 133 家企業捐贈，是企業支持度極高的指標。</p>
-                </div>
-            </div>
-        </section>
-    </div>
-    <script>
-        function handleSearch() {
-            const cat = document.getElementById('search-category').value;
-            const val = document.getElementById('main-search').value;
-            window.location.href = `result.html?cat=${encodeURIComponent(cat)}&q=${encodeURIComponent(val)}`;
+  <main>
+    <section class="hero section-wrap">
+      <div class="hero-copy reveal-up">
+        <p class="eyebrow">POLITICAL MONEY ARCADE / 2016</p>
+        <h1 class="neon-title">政治獻金不是數字，是選舉背後的金流遊戲</h1>
+        <p class="hero-subtitle">2016 年，誰收最多？誰企業捐贈最多？誰靠個人支持？一起把政治獻金變成一場可以查、可以比、可以看的資料遊戲。</p>
+        <p class="hero-story">選舉不只看票數，也要看背後的金流補給。這裡不是賭場，但每一筆政治獻金都像選戰籌碼；我們把公開資料拆成排行榜、戰力卡與金流結構，讓你用資料看懂選戰支援從哪裡來。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="2016_result.html">開始查金流</a>
+          <a class="btn btn-ghost" href="#search-zone">輸入名字開查</a>
+        </div>
+      </div>
+
+      <aside class="hero-dashboard reveal-up delay-1" aria-label="首頁資料儀表板">
+        <div class="jackpot-sign">DATA JACKPOT</div>
+        <div class="stat-grid hero-stats" id="heroStats">
+          <article class="stat-card big">
+            <span class="stat-label">資料筆數</span>
+            <strong id="statRows">讀取中</strong>
+            <small>候選人金流卡準備入場</small>
+          </article>
+          <article class="stat-card big">
+            <span class="stat-label">最高總收入</span>
+            <strong id="statMaxIncome">讀取中</strong>
+            <small id="statMaxIncomeName">等待資料開獎</small>
+          </article>
+          <article class="stat-card big">
+            <span class="stat-label">企業捐贈最高者</span>
+            <strong id="statBusinessName">讀取中</strong>
+            <small id="statBusinessValue">企業金流排行載入中</small>
+          </article>
+        </div>
+        <div class="csv-backup mini-backup" id="homeCsvBackup">
+          <p><strong>CSV 沒自動載入？</strong> 本機直接開 HTML 可能被瀏覽器擋 fetch，手動選取 A05_basic_all.csv 也能開局。</p>
+          <label class="file-btn">
+            上傳 CSV
+            <input type="file" id="homeCsvInput" accept=".csv,text/csv" />
+          </label>
+          <span id="homeLoadStatus" class="load-status">正在嘗試自動讀取資料……</span>
+        </div>
+      </aside>
+    </section>
+
+    <section id="search-zone" class="section-wrap search-zone reveal-up">
+      <div class="section-heading">
+        <p class="eyebrow">SEARCH PORTAL</p>
+        <h2>輸入名字，看看他的金流戰力值</h2>
+        <p>可查候選人姓名、推薦政黨、地區或委員會。輸入後直接進入結果頁，排行榜會自動套用你的關鍵字。</p>
+      </div>
+      <form id="homeSearchForm" class="mega-search" autocomplete="off">
+        <label for="homeSearchInput">搜尋政治獻金資料</label>
+        <div class="mega-search-row">
+          <input id="homeSearchInput" name="search" type="search" placeholder="例如：柯建銘、民主進步黨、台北市、財政" />
+          <button class="btn btn-primary" type="submit">啟動查詢</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="examples" class="section-wrap reveal-up">
+      <div class="section-heading compact">
+        <p class="eyebrow">ONE CLICK QUEST</p>
+        <h2>範例查詢：不知道查誰？先玩這幾關</h2>
+      </div>
+      <div class="quest-grid">
+        <a class="quest-chip" href="2016_result.html?search=%E6%B0%91%E4%B8%BB%E9%80%B2%E6%AD%A5%E9%BB%A8">查詢民主進步黨</a>
+        <a class="quest-chip" href="2016_result.html?search=%E4%B8%AD%E5%9C%8B%E5%9C%8B%E6%B0%91%E9%BB%A8">查詢中國國民黨</a>
+        <a class="quest-chip" href="2016_result.html?search=%E5%8F%B0%E5%8C%97%E5%B8%82">查詢台北市</a>
+        <a class="quest-chip hot" href="2016_result.html?sort=businessIncome">企業捐贈高</a>
+        <a class="quest-chip hot" href="2016_result.html?sort=totalIncome">總收入前十名</a>
+        <a class="quest-chip" href="2016_result.html?sort=anonymousIncome">匿名捐贈排行</a>
+      </div>
+    </section>
+
+    <section id="editors" class="section-wrap reveal-up">
+      <div class="section-heading compact">
+        <p class="eyebrow">EDITOR'S PICKS</p>
+        <h2>編輯精選案例</h2>
+        <p>把資料變成任務卡：不是替任何人下結論，而是幫你快速找到值得比較的金流結構。</p>
+      </div>
+      <div class="pick-grid">
+        <a class="pick-card" href="2016_result.html?sort=totalIncome">
+          <span class="sticker pink">總收入</span>
+          <h3>總收入排行榜：誰是金流大魔王？</h3>
+          <p>誰的選戰補給最厚？先把總收入由高到低開出來。</p>
+          <span class="card-link">開啟排行榜 →</span>
+        </a>
+        <a class="pick-card" href="2016_result.html?sort=businessPct">
+          <span class="sticker green">企業比例</span>
+          <h3>企業捐贈比例最高：誰最受企業青睞？</h3>
+          <p>從營利事業捐贈比例，看不同候選人的金流來源結構。</p>
+          <span class="card-link">查看企業應援 →</span>
+        </a>
+        <a class="pick-card" href="2016_result.html?sort=personalPct">
+          <span class="sticker yellow">個人比例</span>
+          <h3>個人捐贈比例最高：誰靠支持者堆出聲量？</h3>
+          <p>小額與個人捐贈不是配角，它可能是另一種選戰能量。</p>
+          <span class="card-link">看群眾支持 →</span>
+        </a>
+        <a class="pick-card" href="2016_result.html?sort=totalExpense">
+          <span class="sticker orange">總支出</span>
+          <h3>支出排行榜：誰的選戰最燒錢？</h3>
+          <p>收入之外，也看看競選期間資源如何被花出去。</p>
+          <span class="card-link">點燃支出榜 →</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>資料新聞娛樂化呈現｜所有數字以 A05_basic_all.csv 原始欄位計算，不新增候選人、不暗示違法。</p>
+  </footer>
+
+  <script>
+    const CSV_CANDIDATES = ['A05_basic_all.csv', 'A05_basic_all(1).csv'];
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let insideQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (char === '"') {
+          if (insideQuotes && next === '"') {
+            cell += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          row.push(cell);
+          cell = '';
+        } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(cell);
+          if (row.some(value => value.trim() !== '')) rows.push(row);
+          row = [];
+          cell = '';
+        } else {
+          cell += char;
         }
-    </script>
+      }
+      if (cell || row.length) {
+        row.push(cell);
+        if (row.some(value => value.trim() !== '')) rows.push(row);
+      }
+      const headers = rows.shift().map(header => header.replace(/^\uFEFF/, '').trim());
+      return rows.map(values => {
+        const item = {};
+        headers.forEach((header, index) => item[header] = (values[index] || '').trim());
+        return item;
+      });
+    }
+
+    function numberValue(value) {
+      if (value === undefined || value === null || value === '') return 0;
+      const cleaned = String(value).replace(/[,$％%\s]/g, '').replace(/—/g, '');
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function formatMoney(value) {
+      if (value === undefined || value === null || value === '') return '—';
+      return '$' + Math.round(numberValue(value)).toLocaleString('en-US');
+    }
+
+    function formatCount(value) {
+      if (value === undefined || value === null || value === '') return '—';
+      return Math.round(numberValue(value)).toLocaleString('en-US');
+    }
+
+    function computeHomeStats(data) {
+      const maxIncome = [...data].sort((a, b) => numberValue(b['總收入']) - numberValue(a['總收入']))[0];
+      const maxBusiness = [...data].sort((a, b) => numberValue(b['營利事業捐贈收入']) - numberValue(a['營利事業捐贈收入']))[0];
+      document.getElementById('statRows').textContent = formatCount(data.length);
+      document.getElementById('statMaxIncome').textContent = maxIncome ? formatMoney(maxIncome['總收入']) : '—';
+      document.getElementById('statMaxIncomeName').textContent = maxIncome ? `${maxIncome['姓名']}｜${maxIncome['推薦政黨'] || '—'}` : '—';
+      document.getElementById('statBusinessName').textContent = maxBusiness ? maxBusiness['姓名'] : '—';
+      document.getElementById('statBusinessValue').textContent = maxBusiness ? `${formatMoney(maxBusiness['營利事業捐贈收入'])}｜${maxBusiness['推薦政黨'] || '—'}` : '—';
+      document.getElementById('homeLoadStatus').textContent = `已載入 ${formatCount(data.length)} 筆資料，可以開始查金流。`;
+      document.getElementById('homeCsvBackup').classList.add('loaded');
+    }
+
+    async function loadCSV() {
+      const sessionText = sessionStorage.getItem('a05csv2016');
+      if (sessionText) return parseCSV(sessionText);
+      let lastError;
+      for (const fileName of CSV_CANDIDATES) {
+        try {
+          const response = await fetch(fileName, { cache: 'no-store' });
+          if (!response.ok) throw new Error(response.statusText);
+          const text = await response.text();
+          sessionStorage.setItem('a05csv2016', text);
+          return parseCSV(text);
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError || new Error('CSV load failed');
+    }
+
+    document.getElementById('homeSearchForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const keyword = document.getElementById('homeSearchInput').value.trim();
+      const query = keyword ? `?search=${encodeURIComponent(keyword)}` : '';
+      window.location.href = `2016_result.html${query}`;
+    });
+
+    document.getElementById('homeCsvInput').addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = String(reader.result || '');
+        sessionStorage.setItem('a05csv2016', text);
+        computeHomeStats(parseCSV(text));
+      };
+      reader.readAsText(file, 'utf-8');
+    });
+
+    loadCSV()
+      .then(computeHomeStats)
+      .catch(() => {
+        document.getElementById('homeLoadStatus').textContent = '自動讀取被瀏覽器擋下，請用上傳 CSV 備援。';
+      });
+  </script>
 </body>
 </html>
